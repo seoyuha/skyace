@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: skyace
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: echo "no build"
+    startCommand: node server.js
+    healthCheckPath: /api/settings
