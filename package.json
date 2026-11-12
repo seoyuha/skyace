@@ -1,0 +1,9 @@
+{
+  "name": "skyace-english",
+  "version": "1.0.0",
+  "description": "SKY ACE 영어 복습 출격 - 반별 기록 서버",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SKY ACE TV 모드</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Do+Hyeon&display=swap">
+<style>
+:root{--f-d:'Russo One','Arial Black',sans-serif;--f-k:'Do Hyeon','Malgun Gothic',sans-serif;--gold:#ffd25e;--ink:#eaf6ff;--ink2:#bfe0ff;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;height:100%;overflow:hidden;background:#06204f}
+body{font-family:var(--f-k);color:var(--ink);display:flex;align-items:center;justify-content:center}
+.stage{position:relative;width:min(100vw,177.78vh);aspect-ratio:16/9;container-type:inline-size;background:linear-gradient(180deg,#05153a55,#05153a22 40%,#04102ecc),url(img/bg_sky.webp) center/cover no-repeat;overflow:hidden}
+.pnl{position:absolute;border:1.4cqw solid transparent;border-image:url(img/p_blue.webp) 40 fill / 1.4cqw stretch}
+.ttl{z-index:2;position:absolute;left:50%;transform:translateX(-50%);top:-1.2cqw;padding:.2cqw 2.4cqw;font-size:1.7cqw;color:#fff;background:linear-gradient(#1f63c9,#0b2f7a);border:.2cqw solid #8fd8ff;border-radius:1cqw;white-space:nowrap;box-shadow:0 .3cqw 0 #031033;text-shadow:0 .15cqw 0 #031033}
+.ttl:before,.ttl:after{content:"";position:absolute;top:50%;width:3.6cqw;height:2.4cqw;transform:translateY(-50%);background:url(img/p_wing.webp) 0 50%/auto 100% no-repeat}
+.ttl:before{right:100%;background-position:0 50%}.ttl:after{left:100%;background-position:100% 50%}
+/* 머리 */
+.hd{position:absolute;left:0;right:0;top:0;height:16%;display:flex;align-items:center;justify-content:center;gap:1.5cqw}
+.hd .lg{height:80%;filter:drop-shadow(0 .4cqw .6cqw #000a)}
+.hd .rib{font-size:2.3cqw;color:#3a1a00;background:linear-gradient(#ffe887,#f2a41a);border:.25cqw solid #fff3c2;border-radius:.8cqw;padding:.2cqw 1.6cqw;box-shadow:0 .35cqw 0 #8a4c06;white-space:nowrap}
+.hd .crew{position:absolute;right:1cqw;top:1cqw;height:72%}
+.hd .twr{position:absolute;left:1cqw;top:.6cqw;height:84%}
+.chips{position:absolute;left:2%;right:2%;top:16.5%;height:7%;display:flex;gap:1cqw}
+.chip{flex:1;display:flex;align-items:center;justify-content:center;gap:.8cqw;font-size:1.6cqw;background:#08214ee6;border:.2cqw solid #6cc8ff;border-radius:1cqw;box-shadow:inset 0 0 1cqw #2a7fff55;white-space:nowrap;overflow:hidden}
+.chip b{font-family:var(--f-d);font-weight:400;color:var(--gold);font-size:1.9cqw}
+.chip img{height:86%}
+/* 반 대항전 */
+#vsP{left:2%;top:27%;width:62%;height:44%}
+.cls{position:absolute;bottom:4%;width:27%;display:flex;flex-direction:column;align-items:center;gap:.4cqw}
+.cls .nm{font-size:2.2cqw;color:#fff;text-shadow:0 .2cqw 0 #031033}
+.cls .acc{font-family:var(--f-d);font-size:3cqw;color:#fff;text-shadow:0 .25cqw 0 #031033,0 0 1cqw #39b8ff}
+.cls .sub{font-size:1.2cqw;color:var(--ink2)}
+.cls .tube{width:40%;height:6.4cqw;background:#061534;border:.2cqw solid #3e8ad6;border-radius:1cqw 1cqw .4cqw .4cqw;display:flex;align-items:flex-end;overflow:hidden}
+.cls .tube i{display:block;width:100%;background:linear-gradient(#8ff0ff,#1a8fff);transition:height .8s}
+.cls.c2 .tube i{background:linear-gradient(#ffb0be,#e8254d)}.cls.c3 .tube i{background:linear-gradient(#b8ffcf,#16b85c)}
+.cls .crown{position:absolute;top:-3.4cqw;height:3.4cqw;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-.5cqw)}}
+.vsI{position:absolute;height:5cqw;top:30%}
+/* 랭킹 */
+#rkP{left:66%;top:27%;width:32%;height:71%}
+.tabs{display:flex;gap:.6cqw;justify-content:center;margin-top:1.6cqw}
+.tabs button{border:0;background:transparent;padding:0;cursor:pointer;height:3.4cqw;opacity:.55;filter:saturate(.5)}
+.tabs button[aria-pressed="true"]{opacity:1;filter:none}
+.tabs button img{height:100%;display:block}
+.rkSub{text-align:center;font-size:1.5cqw;color:var(--gold);margin:.6cqw 0 .2cqw}
+.row{display:grid;grid-template-columns:4cqw 1fr 7cqw;align-items:center;height:3.55cqw;margin:.35cqw .2cqw;padding:0 .8cqw;background:#0b2a5ccc;border:.15cqw solid #3e8ad6;border-radius:.8cqw;font-size:1.6cqw}
+.row.top{background:linear-gradient(90deg,#ffcf3d33,#0b2a5c 60%);border-color:#ffd25e}
+.row .r{font-family:var(--f-d);text-align:center}
+.row .r img{height:3cqw;display:block;margin:0 auto}
+.row .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .n small{color:var(--ink2);font-size:1.1cqw;margin-left:.4cqw}
+.row .s{font-family:var(--f-d);text-align:right;color:#fff}
+.empty{text-align:center;color:var(--ink2);font-size:1.6cqw;margin-top:4cqw}
+/* 최근 기록 */
+#rcP{left:2%;top:74%;width:62%;height:24%}
+.cards{display:flex;gap:1cqw;height:100%;padding-top:2.4cqw}
+.card{flex:1;min-width:0;background:#0b2a5ccc;border:.18cqw solid #3e8ad6;border-radius:1cqw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2cqw;position:relative;animation:in .6s ease-out}
+@keyframes in{from{transform:translateY(1cqw);opacity:0}}
+.card .who{font-size:1.5cqw;white-space:nowrap;overflow:hidden;max-width:92%;text-overflow:ellipsis}
+.card .sc{font-family:var(--f-d);font-size:2.2cqw;color:#fff}
+.card .st{font-size:1.4cqw;color:var(--gold);letter-spacing:.1em}
+.card .ago{font-size:1cqw;color:var(--ink2)}
+.card .w{position:absolute;right:-.6cqw;top:-1cqw;height:2cqw;transform:rotate(10deg)}
+.card.lose{border-color:#7d5aa8;opacity:.85}
+.mt{flex:1;min-width:0;background:linear-gradient(90deg,#1c5fd0cc,#0b2a5c 45%,#0b2a5c 55%,#c8234acc);border:.18cqw solid #8fd8ff;border-radius:1cqw;display:flex;flex-direction:column;justify-content:center;gap:.3cqw;padding:.4cqw .7cqw;position:relative;animation:in .6s ease-out}
+.mt.end{opacity:.75;border-color:#ffd25e}
+.mt .nm{display:flex;justify-content:space-between;align-items:center;font-size:1.3cqw;white-space:nowrap}
+.mt .nm span{overflow:hidden;text-overflow:ellipsis;max-width:42%}
+.mt .nm img{height:2.2cqw}
+.mt .sc{display:flex;justify-content:space-between;font-family:var(--f-d);font-size:1.5cqw;color:#fff}
+.mt .gg{display:flex;gap:.4cqw}.mt .gg i{flex:1;height:.8cqw;border-radius:.4cqw;background:#061534;overflow:hidden;display:block}.mt .gg b{display:block;height:100%}
+.mt .st2{text-align:center;font-size:1cqw;color:#ffe68a}
+.stat{position:absolute;right:3%;top:2.2%;height:4.6%}
+/* 정지 */
+.halt{position:absolute;inset:0;background:#020818cc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1cqw;z-index:9}
+.halt img{width:36cqw}
+.halt p{font-size:2.4cqw;margin:0}
+.login{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#020818d0;z-index:10;font-size:2cqw;text-align:center;padding:4cqw}
+.fs{position:absolute;right:.8cqw;bottom:.8cqw;z-index:8;border:0;border-radius:.6cqw;background:#08214ecc;color:#cfe7ff;font:inherit;font-size:1.1cqw;padding:.3cqw .8cqw;cursor:pointer;opacity:.6}
+.fs:hover{opacity:1}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="hd"><img class="twr" src="img/v6_tower.webp" alt=""><img class="lg" src="img/logo.webp" alt="SKY ACE"><div class="rib">TV 모드 · 실시간 관전</div><img class="crew" src="img/v6_crew5.webp" alt=""></div>
+  <div class="chips">
+    <div class="chip">👥 참여 학생 <b id="cPpl">0</b>명</div>
+    <div class="chip">✈ 오늘 출격 <b id="cRun">0</b>번</div>
+    <div class="chip">🎯 평균 정답률 <b id="cAcc">0%</b></div>
+    <div class="chip" id="cState"><img id="stImg" src="img/v6_e_play.webp" alt="게임 중"></div>
+  </div>
+  <div class="pnl" id="vsP"><div class="ttl">반 대항전 · 평균 정답률</div><div id="vsBody"></div></div>
+  <div class="pnl" id="rkP"><div class="ttl">🏆 랭킹</div>
+    <div class="tabs"><button type="button" data-v="all" aria-pressed="true"><img src="img/v6_b_rankall.webp" alt="전체 랭킹"></button><button type="button" data-v="cls" aria-pressed="false"><img src="img/v6_b_rankcls.webp" alt="반 랭킹"></button></div>
+    <div class="rkSub" id="rkSub"></div><div id="rkRows"></div>
+  </div>
+  <div class="pnl" id="rcP"><div class="ttl" id="rcTtl">방금 들어온 기록</div><div class="cards" id="rcCards"></div></div>
+  <div class="halt" id="halt" hidden><img src="img/halt_red.webp" alt="게임 중지"><p>선생님이 게임을 잠깐 멈췄어요</p></div>
+  <div class="login" id="login" hidden><div>교사 관리 화면에서 <b style="color:var(--gold)">TV 모드</b> 버튼을 눌러 열어 주세요.<br><small style="font-size:1.4cqw;color:var(--ink2)">(로그인한 선생님만 볼 수 있어요)</small></div></div>
+  <button class="fs" id="fs" type="button">⛶ 전체 화면</button>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let token = '';
+try { token = decodeURIComponent(location.hash.slice(1)) || sessionStorage.getItem('skyTeacher') || ''; if (token) sessionStorage.setItem('skyTeacher', token); history.replaceState(null, '', location.pathname); } catch (e) {}
+let all = [], view = 'all', clsIdx = 0, autoT = 0, DU = { matches: [] };
+const CLS = ['8', '9', '10'];
+const todayStart = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); };
+async function load() {
+  if (!token) { $('login').hidden = false; return; }
+  try {
+    const r = await fetch('api/teacher/results', { headers: { Authorization: 'Bearer ' + token }, cache: 'no-store' });
+    if (r.status === 401) { $('login').hidden = false; return; }
+    const j = await r.json(); all = j.results || []; $('login').hidden = true; render();
+  } catch (e) {}
+  try { const r = await fetch('api/teacher/duel', { headers: { Authorization: 'Bearer ' + token }, cache: 'no-store' }); if (r.ok) { DU = await r.json(); render(); } } catch (e) {}
+  try { const r = await fetch('api/state', { cache: 'no-store' }); const j = await r.json(); $('halt').hidden = !j.paused; $('stImg').src = j.paused ? 'img/v6_e_stop.webp' : 'img/v6_e_play.webp'; $('stImg').alt = j.paused ? '중지됨' : '게임 중'; } catch (e) {}
+}
+function ago(t) { const s = Math.round((Date.now() - t) / 1000); return s < 60 ? '방금 전' : s < 3600 ? Math.floor(s / 60) + '분 전' : Math.floor(s / 3600) + '시간 전'; }
+function render() {
+  const today = all.filter(r => r.at >= todayStart()), base = today.length ? today : all;
+  const q = base.reduce((a, r) => a + r.total, 0), c = base.reduce((a, r) => a + r.correct, 0);
+  $('cPpl').textContent = new Set(base.map(r => r.cls + '-' + r.nick)).size; $('cRun').textContent = base.length; $('cAcc').textContent = (q ? Math.round(c / q * 100) : 0) + '%';
+  // 반 대항전
+  const cs = CLS.map(k => { const rs = base.filter(r => r.cls === k), qq = rs.reduce((a, r) => a + r.total, 0), cc = rs.reduce((a, r) => a + r.correct, 0); return { k, n: rs.length, ppl: new Set(rs.map(r => r.nick)).size, acc: qq ? Math.round(cc / qq * 100) : 0 }; });
+  const lead = cs.slice().sort((a, b) => b.acc - a.acc || b.n - a.n)[0];
+  $('vsBody').innerHTML = cs.map((x, i) => `<div class="cls c${i + 1}" style="left:${3 + i * 34}%">${x === lead && x.n ? '<img class="crown" src="img/v6_crown.webp" alt="1등">' : ''}<div class="tube"><i style="height:${x.acc}%"></i></div><div class="acc">${x.acc}%</div><div class="nm">${x.k}반</div><div class="sub">출격 ${x.n}번 · ${x.ppl}명</div></div>`).join('') + '<img class="vsI" src="img/v6_vs.webp" alt="" style="left:28%"><img class="vsI" src="img/v6_vs.webp" alt="" style="left:62%">';
+  // 랭킹
+  const pool = base.filter(r => !r.review && !r.duel && (view === 'all' || r.cls === CLS[clsIdx]));
+  const best = new Map(); pool.forEach(r => { const k = r.cls + '-' + r.nick, b = best.get(k); if (!b || r.score > b.score) best.set(k, r); });
+  const rk = [...best.values()].sort((a, b) => b.score - a.score).slice(0, 8);
+  $('rkSub').textContent = (view === 'all' ? '전체 반' : CLS[clsIdx] + '반') + (today.length ? ' · 오늘' : ' · 전체 기간');
+  $('rkRows').innerHTML = rk.length ? rk.map((r, i) => `<div class="row${i < 3 ? ' top' : ''}"><span class="r">${i < 3 ? `<img src="img/v6_m${i + 1}.webp" alt="${i + 1}위">` : i + 1}</span><span class="n">${esc(r.nick)}<small>${r.cls}반</small></span><span class="s">${r.score.toLocaleString()}</span></div>`).join('') : '<div class="empty">아직 기록이 없어요</div>';
+  // 실시간 1대1 대결
+  const live = (DU.matches || []).filter(m => m.state === 'play' || m.sec < 600 && m.state === 'end').slice(0, 5);
+  if (live.some(m => m.state === 'play')) {
+    $('rcTtl').textContent = '⚔ 실시간 1대1 대결';
+    $('rcCards').innerHTML = live.map(m => { const sc = (m.sum && m.sum.sc) || [0, 0], g = (m.sum && m.sum.g) || [100, 100];
+      return `<div class="mt${m.state === 'play' ? '' : ' end'}"><div class="nm"><span>${m.cls}반 ${esc(m.a)}</span><img src="img/v6_vs.webp" alt="VS"><span>${esc(m.b)}${m.ai ? '🤖' : ''}</span></div><div class="sc"><span>${sc[0].toLocaleString()}</span><span>${sc[1].toLocaleString()}</span></div><div class="gg"><i><b style="width:${100 - g[0]}%;background:#3cc8ff"></b></i><i><b style="width:${100 - g[1]}%;background:#ff5c8a;margin-left:auto"></b></i></div><div class="st2">${m.state === 'play' ? (m.sum && m.sum.mode === 'boss' ? '🔥 보스 대결 중!' : '진행 중 ' + Math.floor(m.sec / 60) + ':' + String(m.sec % 60).padStart(2, '0')) : '🏆 ' + esc(m.winner || '')}</div></div>`; }).join('');
+    return;
+  }
+  $('rcTtl').textContent = '방금 들어온 기록';
+  // 최근
+  const rc = all.slice().sort((a, b) => b.at - a.at).slice(0, 5);
+  $('rcCards').innerHTML = rc.length ? rc.map(r => `<div class="card${r.win ? '' : ' lose'}">${r.win ? '<img class="w" src="img/v6_win_small.webp" alt="WIN">' : ''}<div class="who">${r.cls}반 ${esc(r.nick)}${r.duel ? ' ⚔' : ''}</div><div class="sc">${r.score.toLocaleString()}</div><div class="st">${r.win ? '★'.repeat(r.stars) + '☆'.repeat(3 - r.stars) : '다시 도전!'}</div><div class="ago">${ago(r.at)} · 정답률 ${r.acc}%</div></div>`).join('') : '<div class="empty" style="width:100%;margin-top:2cqw">학생들이 출격하면 여기에 바로 나와요</div>';
+}
+function setView(v) { view = v; document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v))); render(); }
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { clearInterval(autoT); setView(b.dataset.v); if (b.dataset.v === 'cls') clsIdx = (clsIdx + 1) % 3, render(); });
+// 자동으로 전체 → 8반 → 9반 → 10반 순서로 돌아가며 보여 줘요
+let step = 0; autoT = setInterval(() => { step = (step + 1) % 4; if (step === 0) setView('all'); else { clsIdx = step - 1; setView('cls'); } }, 10000);
+$('fs').onclick = () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); else document.exitFullscreen(); };
+load(); setInterval(load, 5000);
+</script>
+</body>
+</html>
