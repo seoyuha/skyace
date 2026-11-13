@@ -40,8 +40,8 @@ body{font-family:var(--f-k);color:var(--ink);display:flex;align-items:center;jus
 /* 랭킹 */
 #rkP{left:66%;top:27%;width:32%;height:71%}
 .tabs{display:flex;gap:.6cqw;justify-content:center;margin-top:1.6cqw}
-.tabs button{border:0;background:transparent;padding:0;cursor:pointer;height:3.4cqw;opacity:.55;filter:saturate(.5)}
-.tabs button[aria-pressed="true"]{opacity:1;filter:none}
+.tabs button{border:.2cqw solid #0a1a48;border-radius:999px;background:linear-gradient(#9fe6ff,#2a8cf5 55%,#1350c4);color:#fff;font:inherit;font-size:1.5cqw;text-shadow:0 .15cqw 0 #0a1a48;padding:0 1.4cqw;cursor:pointer;height:3.2cqw;opacity:.55;white-space:nowrap;box-shadow:0 .25cqw 0 #0a1a48}
+.tabs button[aria-pressed="true"]{opacity:1;background:linear-gradient(#fff7b0,#ffd43a 55%,#f0a20a);color:#3a1a00;text-shadow:none}
 .tabs button img{height:100%;display:block}
 .rkSub{text-align:center;font-size:1.5cqw;color:var(--gold);margin:.6cqw 0 .2cqw}
 .row{display:grid;grid-template-columns:4cqw 1fr 7cqw;align-items:center;height:3.55cqw;margin:.35cqw .2cqw;padding:0 .8cqw;background:#0b2a5ccc;border:.15cqw solid #3e8ad6;border-radius:.8cqw;font-size:1.6cqw}
@@ -103,7 +103,7 @@ body{font-family:var(--f-k);color:var(--ink);display:flex;align-items:center;jus
   </div>
   <div class="pnl" id="vsP"><div class="ttl" id="vsTtl">반 대항전 · 평균 정답률</div><div id="vsBody"></div><div id="whoBody" hidden></div><div class="whoLg" id="whoLg" hidden><b>🟡 대기실</b><b>🟢 게임 중</b><b>🔴 1대1 대결</b></div></div>
   <div class="pnl" id="rkP"><div class="ttl">🏆 랭킹</div>
-    <div class="tabs"><button type="button" data-v="all" aria-pressed="true"><img src="img/v6_b_rankall.webp" alt="전체 랭킹"></button><button type="button" data-v="cls" aria-pressed="false"><img src="img/v6_b_rankcls.webp" alt="반 랭킹"></button></div>
+    <div class="tabs"><button type="button" data-v="all" aria-pressed="true">🏆 전체 랭킹</button><button type="button" data-v="cls" aria-pressed="false">👥 반 랭킹</button></div>
     <div class="rkSub" id="rkSub"></div><div id="rkRows"></div>
   </div>
   <div class="pnl" id="rcP"><div class="ttl" id="rcTtl">방금 들어온 기록</div><div class="cards" id="rcCards"></div></div>
