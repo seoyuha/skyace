@@ -1764,7 +1764,7 @@ $('bLaunch').onclick = async () => {
 /* ===================== 3. 전투 상태 ===================== */
 let S = null, last = performance.now(), keys = {};
 function startGame(review) { show('scrGame'); newRun(review); countdown(); }
-function newRun(review) {
+function newRun(review, cont) {
   const dk = effDiff(), d = DIFF[dk], sh = SHIPS.find(s => s.id === cfg.ship), pl = cfg.pilot;
   const maxHp = pl === 'bruno_bear' ? 145 : pl === 'coco_dog' ? 125 : 100;
   S = {
@@ -1780,6 +1780,10 @@ function newRun(review) {
     review: !!review, reviewQ: review ? review.q.slice() : [], reviewS: review ? review.s.slice() : [], reviewIdx: 0, ended: false
   };
   if (review) S.quota = Math.max(3, Math.min(8, review.q.length || 3));
+  S.stg = S.map;
+  if (cont) { // 보스를 깨고 다음 스테이지로: 점수·레벨·아이템은 이어 가고 체력은 가득
+    S.stg = cont.stg; S.map = (cont.stg - 1) % 6 + 1; S.score = cont.score; S.lvl = cont.lvl; S.xp = cont.xp; S.xpNeed = cont.xpNeed; S.coins = cont.coins; S.items = cont.items; S.maxCombo = cont.maxCombo; S.power = cont.power || 0;
+  }
   weapon();
   $('unitChip').textContent = S.units.length === 12 ? 'Unit 1~12' : S.units.length > 2 ? 'Mix ×' + S.units.length : 'Unit ' + S.units.map(u => u.n).join('+');
   $('face').src = PIMG(pl); $('pmFace').src = PIMG(pl); $('pcAv').src = PIMG(pl); $('pcNm').textContent = cfg.nick || PILOTS.find(p => p.id === pl).name; $('faceName').textContent = recording() ? cfg.nick : PILOTS.find(p => p.id === pl).name;
@@ -1827,7 +1831,7 @@ function updateHUD() {
   $('lvTxt').textContent = 'LV ' + S.lvl; $('pcSc').textContent = S.score.toLocaleString(); { const hr = Math.max(0, S.hp / S.maxHp), n = Math.ceil(hr * 3); $('pcHp').textContent = '❤'.repeat(n) + '♡'.repeat(3 - n); }
   $('scoreChip').innerHTML = `SCORE <em style="color:#fff">${String(S.score).padStart(6, '0')}</em>`;
   const bossOn = S.mode === 'boss' || S.mode === 'bosswarn';
-  $('stageChip').innerHTML = bossOn ? `<b class="bs">💀 BOSS 전투</b><small>Stage ${S.map}</small>` : `STAGE <em>${S.map}-${Math.min(S.quota, S.quizDone + 1)}</em>`; $('stageChip').classList.toggle('boss', bossOn);
+  $('stageChip').innerHTML = bossOn ? `<b class="bs">💀 BOSS 전투</b><small>Stage ${S.stg}</small>` : `STAGE <em>${S.stg}-${Math.min(S.quota, S.quizDone + 1)}</em>`; $('stageChip').classList.toggle('boss', bossOn);
   [['missile', 'nMissile', 'itMissile'], ['shield', 'nShield', 'itShield'], ['hyper', 'nHyper', 'itHyper']].forEach(([k, n, b]) => {
     $(n).textContent = 'x' + S.items[k]; $(b).disabled = !S.items[k] || S.state !== 'play';
   });
@@ -1999,7 +2003,7 @@ function shoot() {
   for (let i = 0; i < n; i++) { const d = (i - (n - 1) / 2) * .16; S.bullets.push({ x: p.x + (i - (n - 1) / 2) * 11, y: p.y - 40, vx: d * 220, vy: -720, good: true, r: 6, dmg: S.dmg, hy, own: S.duel ? S.duel.me : 1 }); }
 }
 function spawnFoe() {
-  const r = Math.random(), type = r < .6 ? 0 : r < .88 ? 1 : 2, tier = 1 + (S.map - 1) * .12 + S.quizDone * .05;
+  const r = Math.random(), type = r < .6 ? 0 : r < .88 ? 1 : 2, tier = 1 + (Math.max(S.map, S.stg) - 1) * .12 + S.quizDone * .05;
   const hp = Math.round([2, 4, 8][type] * tier);
   if (S.quizDone >= 1 && Math.random() < .055 && !S.enemies.some(e => e.type === 3)) return spawnElite();
   S.enemies.push({ x: rnd(50, 400), y: -60, type, hp, max: hp, v: [130, 165, 90][type], rad: [24, 26, 34][type], shot: rnd(1.2, 2.6), wob: Math.random() * 6, spr: v7Spr(type) });
@@ -2247,7 +2251,7 @@ function finish(win) {
     const notesH = `<div class="notes rw8"><h4>📒 오답 노트 ${notes.length ? '(' + notes.length + ')' : ''}</h4>${notes.length ? notes.map(n => `<div class="note"><div class="q">${n.unit}단원 · ${TYPE_LABEL[n.type]} · ${esc(n.prompt)}${n.type === 'B' ? ' <span style="color:#8fb3d3">(' + esc(n.sub) + ')</span>' : ''}</div><div class="a">${esc(n.type === 'B' ? n.speak : n.answer)}</div><div class="y">내가 고른 답: ${esc(n.chosen)}</div></div>`).join('') : `<p style="margin:0;font-size:14px">${S.total ? '틀린 문제가 하나도 없어요! 완벽해요 ✨' : '풀었던 문제가 없어요.'}</p>`}</div>`;
     $('endBox').className = 'endBox res8' + (win ? '' : ' fail');
     const tm = Math.round(S.t), tmTxt = Math.floor(tm / 60) + ':' + String(tm % 60).padStart(2, '0');
-    $('endBox').innerHTML = `<div class="r8Top"><div class="r8Stage">STAGE ${S.map}</div>${badge}</div>
+    $('endBox').innerHTML = `<div class="r8Top"><div class="r8Stage">STAGE ${S.stg}</div>${badge}</div>
       <div class="r8Mid"><div class="r8Pilot"><img src="${PIMG(S.pl)}" alt=""><div class="r8Lab">${win ? '승리!' : '아쉬워요!'}</div></div>
         <div class="r8Stats">
           <div class="r8Row"><span>🏆 획득 점수</span><b>${S.score.toLocaleString()}</b></div>
@@ -2260,8 +2264,9 @@ function finish(win) {
         <div class="rw"><img src="${UI.icon_gem}" alt=""><b>×${S.correct}</b><small>정답 보석</small></div>
         <div class="rw"><img src="${UI.icon_xp}" alt=""><b>×${S.xpGot}</b><small>EXP</small></div></div>
       <div class="notes rec8" id="endRank" hidden style="max-height:none"></div>` + notesH +
-      `<div class="endBtns r8Btns">${bt8('v8_e_blue', '🏠 로비로', 'bSel', 'sq')}${bt8('v8_e_blue', '↻ 다시 도전', 'bRetry', 'sq')}${(S.wrongQ.length || S.wrongS.length) ? bt8('v8_e_orange', '✍ 오답 도전', 'bReview', 'sq') : ''}${bt8('v8_e_gold', '🏆 랭킹', 'bEndRank', 'sq')}</div>`;
+      `<div class="endBtns r8Btns">${win && !S.review ? bt8('v8_e_green', '▶ 다음 스테이지', 'bNext', 'sq') : ''}${bt8('v8_e_blue', '🏠 로비로', 'bSel', 'sq')}${bt8('v8_e_blue', '↻ 다시 도전', 'bRetry', 'sq')}${(S.wrongQ.length || S.wrongS.length) ? bt8('v8_e_orange', '✍ 오답 도전', 'bReview', 'sq') : ''}${bt8('v8_e_gold', '🏆 랭킹', 'bEndRank', 'sq')}</div>`;
     $('ovEnd').style.setProperty('--endbg', `url(${win ? UI.v6_bg_win : UI.v6_bg_lose})`); $('ovEnd').hidden = false; $('ovEnd').scrollTop = 0;
+    if ($('bNext')) $('bNext').onclick = () => { sfx('ui_confirm', .5); if (HALT.on) return; const o = S; newRun(null, { stg: o.stg + 1, score: o.score, lvl: o.lvl, xp: o.xp, xpNeed: o.xpNeed, coins: o.coins, items: { ...o.items }, maxCombo: o.maxCombo, power: o.power }); countdown(); };
     $('bRetry').onclick = () => { sfx('ui_confirm', .5); if (HALT.on) return; newRun(null); countdown(); };
     if ($('bReview')) $('bReview').onclick = () => { sfx('ui_confirm', .5); if (HALT.on) return; const rv = { q: run.wrongQ.slice(), s: run.wrongS.slice() }; newRun(rv); countdown(); };
     $('bSel').onclick = () => { sfx('ui_click', .5); S = null; show('scrPrep'); renderPrep(); };
