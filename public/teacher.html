@@ -117,6 +117,16 @@ body{background:linear-gradient(180deg,#020a1fcc,#04153a99 50%,#020a1fee) fixed,
 .haltBox button:active{transform:translateY(.15cqw);filter:brightness(.9)}
 .haltBox p{margin:0;font-family:var(--f-k);font-size:1cqw;color:#cfe7ff}
 .haltBox.on p{color:#ffb3c1}
+.mbx{flex:0 0 auto;width:auto!important;height:2.2cqw;padding:0 .8cqw!important;border:.18cqw solid #0a1a48!important;border-radius:999px!important;background:linear-gradient(#5c7fb8,#2a4a86)!important;color:#cfe0ff;font-family:var(--f-k);font-size:1.05cqw;white-space:nowrap;box-shadow:0 .2cqw 0 #0a1a48;opacity:.75}
+.mbx[aria-pressed="true"]{opacity:1;color:#fff;text-shadow:0 .12cqw 0 #0a1a48;background:linear-gradient(#9fe6ff,#2a8cf5 55%,#1350c4)!important;box-shadow:0 0 .6cqw #5fd8ff,0 .2cqw 0 #0a1a48}
+#mDuel[aria-pressed="true"]{background:linear-gradient(#ffb0b8,#ff4a5e 55%,#c4162e)!important;box-shadow:0 0 .6cqw #ff6a8a,0 .2cqw 0 #0a1a48}
+#mBoth[aria-pressed="true"]{background:linear-gradient(#e2b8ff,#9b4dff 55%,#5b1fc0)!important;box-shadow:0 0 .6cqw #c58cff,0 .2cqw 0 #0a1a48}
+.haltBox .hx{width:25%!important;height:3.2cqw;border:.2cqw solid #0a1a48!important;border-radius:999px!important;font-family:var(--f-k);font-size:1.2cqw;color:#fff;text-shadow:0 .12cqw 0 #0a1a48;white-space:nowrap;box-shadow:inset 0 .2cqw 0 #fff8,0 .25cqw 0 #0a1a48}
+.haltBox .hx.stop{background:linear-gradient(#ffb0b8,#ff4a5e 55%,#c4162e)!important}
+.haltBox .hx.go{background:linear-gradient(#c8ff7a,#3fd94a 55%,#13932b)!important}
+.haltBox .hx:disabled{filter:grayscale(.85) brightness(.7);cursor:default;box-shadow:none}
+.haltBox.on .hx.go:not(:disabled){animation:goPulse 1s ease-in-out infinite}
+@keyframes goPulse{50%{transform:scale(1.07);box-shadow:0 0 1.2cqw #7dff9a,0 .25cqw 0 #0a1a48}}
 .toast{position:absolute;left:50%;top:15.3%;transform:translateX(-50%);font-family:var(--f-k);font-size:1.15cqw;color:#7dffc4;text-shadow:0 .1cqw 0 #000;white-space:nowrap}
 .toast.warn{color:var(--gold)}
 .exitB{position:absolute;border:0;background:transparent;padding:0;cursor:pointer}
@@ -194,8 +204,8 @@ body{background:linear-gradient(180deg,#020a1fcc,#04153a99 50%,#020a1fee) fixed,
   <div class="o l" id="wr1" style="left:75.48%;top:61.64%;width:22.37%;height:3.51%"></div><div class="o l" id="wr2" style="left:75.48%;top:66.42%;width:22.37%;height:3.51%"></div><div class="o l" id="wr3" style="left:75.48%;top:70.99%;width:22.37%;height:3.61%"></div>
   <!-- 게임 진행 제어 -->
   <div class="haltBox" id="haltBox" style="left:7.66%;top:82.25%;width:28.47%;height:14.88%">
-   <div class="modeRow"><button class="mb" id="mSolo" type="button"><img src="img/v6_b_solo.webp" alt="개인전"></button><button class="mb" id="mDuel" type="button"><img src="img/v6_b_duel.webp" alt="1대1 대결"></button><span class="dst" id="dst"></span></div>
-   <div class="hb"><button id="bHalt" type="button"><img id="haltImg" src="img/halt_red.webp" alt="게임 중지 (전체 정지)"></button><button id="bTv" type="button" class="tvb"><img src="img/v6_b_tv.webp" alt="TV 모드"></button><button id="bAuto" type="button" class="tvb" title="대기 중인 학생을 지금 바로 짝지어요 (혼자면 AI)"><img src="img/v6_b_auto.webp" alt="자동 배정"></button></div>
+   <div class="modeRow"><button class="mbx" id="mSolo" type="button">🎯 개인전</button><button class="mbx" id="mDuel" type="button">⚔ 1대1</button><button class="mbx" id="mBoth" type="button">🔀 둘 다</button><span class="dst" id="dst"></span></div>
+   <div class="hb"><button class="hx stop" id="bHalt" type="button">⏸ 전체 정지</button><button class="hx go" id="bGo" type="button">▶ 다시 시작</button><button id="bTv" type="button" class="tvb"><img src="img/v6_b_tv.webp" alt="TV 모드"></button><button id="bAuto" type="button" class="tvb" title="대기 중인 학생을 지금 바로 짝지어요 (혼자면 AI)"><img src="img/v6_b_auto.webp" alt="자동 배정"></button></div>
    <p id="haltMsg"></p></div>
   <!-- 아래 버튼 -->
   <div class="cap" style="left:39.95%;top:86.72%;width:7.60%;height:2.13%">새로고침</div><div class="cap" style="left:47.61%;top:86.72%;width:7.42%;height:2.13%">전체 단원</div><div class="cap" style="left:55.02%;top:86.72%;width:7.78%;height:2.13%">모든 반 복사</div><div class="cap" style="left:62.80%;top:86.72%;width:7.48%;height:2.13%">CSV 받기</div><div class="cap" style="left:70.28%;top:86.72%;width:7.60%;height:2.13%" id="clrCap">기록 삭제</div><div class="cap" style="left:77.87%;top:86.72%;width:6.58%;height:2.13%">자세히</div><div class="cap" style="left:85.53%;top:86.29%;width:13.16%;height:2.13%">설정 저장</div>
@@ -237,7 +247,7 @@ const P = (x1, y1, x2, y2) => `left:${(x1 / 16.72).toFixed(2)}%;top:${(y1 / 9.41
 const MEDAL = i => i < 3 ? `<img class="medalI" src="img/medal${i + 1}.webp" alt="${i + 1}위">` : i + 1;
 let token = '', all = [], tab = 'rank', clearArm = 0, CUR = '8', DIRTY = false;
 try { token = sessionStorage.getItem('skyTeacher') || ''; } catch (e) {}
-let SET = { 8: { units: [12], diff: 'normal', mode: 'solo' }, 9: { units: [12], diff: 'normal', mode: 'solo' }, 10: { units: [12], diff: 'normal', mode: 'solo' } };
+let SET = { 8: { units: [12], diff: 'normal', mode: 'both' }, 9: { units: [12], diff: 'normal', mode: 'both' }, 10: { units: [12], diff: 'normal', mode: 'both' } };
 let DUELST = { lobby: {}, matches: [] };
 for (let i = 1; i <= 12; i++) $('fUnit').insertAdjacentHTML('beforeend', `<option value="${i}">${i}단원 포함</option>`);
 async function api(path, opt = {}) {
@@ -269,7 +279,7 @@ function renderSet() {
   $('sCls').value = CUR; $('sDiff').value = s.diff || 'normal';
   $('sUnit').textContent = '📖 ' + uTxt(s.units);
   document.querySelectorAll('.star').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.d === (s.diff || 'normal'))));
-  $('mSolo').setAttribute('aria-pressed', String(s.mode !== 'duel')); $('mDuel').setAttribute('aria-pressed', String(s.mode === 'duel')); renderDuelSt();
+  const md = s.mode || 'both'; $('mSolo').setAttribute('aria-pressed', String(md === 'solo')); $('mDuel').setAttribute('aria-pressed', String(md === 'duel')); $('mBoth').setAttribute('aria-pressed', String(md === 'both')); renderDuelSt();
   $('uChips').innerHTML = Array.from({ length: 12 }, (_, i) => `<button type="button" data-u="${i + 1}" aria-pressed="${s.units.includes(i + 1)}">${i + 1}</button>`).join('') + `<button type="button" class="all" data-all="1">전체</button>`;
 }
 $('sCls').onchange = () => { CUR = $('sCls').value; renderSet(); renderDash(); };
@@ -287,20 +297,20 @@ $('bAll').onclick = () => { SET[CUR].units = Array.from({ length: 12 }, (_, i) =
 $('bCopy').onclick = () => { ['8', '9', '10'].forEach(c => { if (c !== CUR) SET[c] = { units: SET[CUR].units.slice(), diff: SET[CUR].diff, mode: SET[CUR].mode }; }); renderSet(); dirty(); toast(`${CUR}반 설정을 모든 반에 똑같이 넣었어요 · ▶ 를 눌러 저장`, true); };
 $('bSave').onclick = async () => {
   try { const r = await api('api/teacher/settings', { method: 'POST', body: JSON.stringify({ classes: SET }) }); const j = await r.json(); if (j.classes) SET = j.classes; DIRTY = false; renderSet();
-    toast('✓ 저장했어요 · ' + ['8', '9', '10'].map(c => `${c}반 ${SET[c].mode === 'duel' ? '⚔' : ''}${SET[c].units.length === 12 ? '종합' : SET[c].units.join('+') + '단원'}(${DIFF[SET[c].diff] || '보통'})`).join(' / ')); } catch (e) { toast('저장하지 못했어요', true); }
+    toast('✓ 저장했어요 · ' + ['8', '9', '10'].map(c => `${c}반 ${SET[c].mode === 'duel' ? '⚔' : SET[c].mode === 'both' ? '🔀' : ''}${SET[c].units.length === 12 ? '종합' : SET[c].units.join('+') + '단원'}(${DIFF[SET[c].diff] || '보통'})`).join(' / ')); } catch (e) { toast('저장하지 못했어요', true); }
 };
 async function loadSet() { try { const r = await fetch('api/settings', { cache: 'no-store' }); const j = await r.json(); if (j.classes) ['8', '9', '10'].forEach(c => { if (j.classes[c]) SET[c] = { units: j.classes[c].units, diff: j.classes[c].diff || 'normal', mode: j.classes[c].mode || 'solo' }; }); } catch (e) {} renderSet(); }
 /* ---------- 1대1 대결 ---------- */
 async function setMode(m) {
   SET[CUR].mode = m; renderSet();
   try { const r = await api('api/teacher/settings', { method: 'POST', body: JSON.stringify({ classes: SET }) }); const j = await r.json(); if (j.classes) ['8', '9', '10'].forEach(c => { SET[c].mode = j.classes[c].mode; }); renderSet();
-    toast(m === 'duel' ? `⚔ ${CUR}반은 1대1 대결! 학생이 출격하면 자동으로 짝이 지어져요` : `${CUR}반은 개인전으로 바꿨어요`); } catch (e) {}
+    toast(m === 'duel' ? `⚔ ${CUR}반은 1대1 대결만! 학생이 출격하면 자동으로 짝이 지어져요` : m === 'both' ? `🔀 ${CUR}반은 둘 다! 학생이 개인전·1대1을 직접 골라요` : `🎯 ${CUR}반은 개인전만 해요`); } catch (e) {}
 }
-$('mSolo').onclick = () => setMode('solo'); $('mDuel').onclick = () => setMode('duel');
+$('mSolo').onclick = () => setMode('solo'); $('mDuel').onclick = () => setMode('duel'); $('mBoth').onclick = () => setMode('both');
 $('bAuto').onclick = async () => { try { const r = await api('api/teacher/duel', { method: 'POST', body: JSON.stringify({ cls: CUR }) }); DUELST = await r.json(); renderDuelSt(); toast(`${CUR}반 대기 학생을 바로 짝지었어요 (혼자 남으면 AI와 대결)`); } catch (e) {} };
 function renderDuelSt() {
   const w = (DUELST.lobby || {})[CUR] || [], live = (DUELST.matches || []).filter(m => m.cls === CUR && m.state === 'play');
-  $('dst').textContent = SET[CUR].mode === 'duel' ? `대기 ${w.length}명 · 대결 중 ${live.length}경기` : '개인전 모드';
+  const md = SET[CUR].mode || 'both'; $('dst').textContent = md === 'solo' ? '개인전만' : `대기 ${w.length}명 · 대결 ${live.length}경기`;
 }
 async function loadDuel() { try { const r = await api('api/teacher/duel'); DUELST = await r.json(); renderDuelSt(); if (tab === 'duel') render(); } catch (e) {} }
 setInterval(() => { if (token && !$('main').hidden) loadDuel(); }, 3000);
@@ -308,13 +318,14 @@ setInterval(() => { if (token && !$('main').hidden) loadDuel(); }, 3000);
 let HALTED = false;
 function renderHalt() {
   $('haltBox').classList.toggle('on', HALTED);
-  $('haltImg').src = HALTED ? 'img/go_green.webp' : 'img/halt_red.webp';
-  $('haltImg').alt = HALTED ? '게임 시작 (다시 시작)' : '게임 중지 (전체 정지)';
-  $('haltMsg').textContent = HALTED ? '모든 학생 화면이 멈춰 있어요. 누르면 다시 시작해요.' : '누르면 3초 안에 모든 학생 화면이 멈춰요.';
+  $('bHalt').disabled = HALTED; $('bGo').disabled = !HALTED;
+  $('haltMsg').textContent = HALTED ? '⏸ 모두 멈춤 · [▶ 다시 시작]을 누르면 이어서 해요' : '● 게임 진행 중 · 정지하면 3초 안에 모두 멈춰요';
   $('mon').className = 'o mon' + (HALTED ? ' off' : '');
   $('mon').innerHTML = HALTED ? '⏸ 전체 정지<small>학생 화면이 멈췄어요</small>' : '● 게임 진행 중<small>학생들이 출격할 수 있어요</small>';
 }
-$('bHalt').onclick = async () => { try { const r = await api('api/teacher/pause', { method: 'POST', body: JSON.stringify({ paused: !HALTED }) }); const j = await r.json(); HALTED = !!j.paused; renderHalt(); } catch (e) {} };
+async function setHalt(v) { try { const r = await api('api/teacher/pause', { method: 'POST', body: JSON.stringify({ paused: v }) }); const j = await r.json(); HALTED = !!j.paused; renderHalt(); toast(HALTED ? '⏸ 모든 학생 화면을 멈췄어요' : '▶ 다시 시작! 학생들이 이어서 게임해요'); } catch (e) {} }
+$('bHalt').onclick = () => setHalt(true); $('bGo').onclick = () => setHalt(false);
+setInterval(() => { if (token && !$('main').hidden) loadHalt(); }, 4000);
 async function loadHalt() { try { const r = await fetch('api/state', { cache: 'no-store' }); const j = await r.json(); HALTED = !!j.paused; } catch (e) {} renderHalt(); }
 /* ---------- 기록 ---------- */
 async function load() {
@@ -370,7 +381,7 @@ function render() {
   if (tab === 'duel') {
     const L = DUELST.lobby || {}, M = DUELST.matches || [], fc = $('fCls').value;
     const cls = fc ? [fc] : ['8', '9', '10'];
-    const wait = cls.map(c => `<div style="margin:4px 0"><b>${c}반 대기실</b> (${SET[c].mode === 'duel' ? '1대1 대결' : '개인전'}) · ${(L[c] || []).length ? (L[c] || []).map(w => esc(w.nick) + ` <small style="color:var(--ink2)">${w.wait}초</small>`).join(', ') : '<span style="color:var(--ink2)">기다리는 학생 없음</span>'}</div>`).join('');
+    const wait = cls.map(c => `<div style="margin:4px 0"><b>${c}반 대기실</b> (${SET[c].mode === 'duel' ? '1대1 대결' : SET[c].mode === 'solo' ? '개인전' : '둘 다'}) · ${(L[c] || []).length ? (L[c] || []).map(w => esc(w.nick) + ` <small style="color:var(--ink2)">${w.wait}초</small>`).join(', ') : '<span style="color:var(--ink2)">기다리는 학생 없음</span>'}</div>`).join('');
     const rows = M.filter(m => cls.includes(m.cls)).map(m => { const sc = (m.sum && m.sum.sc) || [0, 0], g = (m.sum && m.sum.g) || [100, 100];
       return `<tr><td>${m.cls}반</td><td>${esc(m.a)}</td><td>${sc[0].toLocaleString()} · 게이지 ${g[0]}%</td><td>VS</td><td>${esc(m.b)}${m.ai ? ' 🤖' : ''}</td><td>${sc[1].toLocaleString()} · 게이지 ${g[1]}%</td><td>${m.state === 'play' ? '<b style="color:#7dffc4">진행 중</b>' : m.state === 'left' ? '나감(' + esc(m.left || '') + ')' : '🏆 ' + esc(m.winner || '')}</td><td>${Math.floor(m.sec / 60)}:${String(m.sec % 60).padStart(2, '0')}</td></tr>`; }).join('');
     v.innerHTML = `<div class="tw" style="padding:8px 12px">${wait}</div><div class="tw"><table><thead><tr><th>반</th><th>학생 A</th><th>점수</th><th></th><th>학생 B</th><th>점수</th><th>결과</th><th>시간</th></tr></thead><tbody>${rows || '<tr><td colspan="8" style="color:var(--ink2)">아직 대결이 없어요</td></tr>'}</tbody></table></div>`;

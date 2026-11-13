@@ -1436,7 +1436,7 @@ cfg.units = (cfg.units || []).filter(n => n >= 1 && n <= 12); if (!cfg.units.len
 if (!DIFF[cfg.diff]) cfg.diff = 'normal';
 /* 선생님이 정한 단원·난이도 (서버에 올렸을 때 반을 고르면 적용) */
 const NET = { on: false };
-const TEACH = { units: null, diff: '', mode: 'solo' };
+const TEACH = { units: null, diff: '', mode: 'both' };
 function locked() { return !!(NET.on && cfg.cls && TEACH.units && TEACH.units.length); }
 function effUnits() { return locked() ? TEACH.units.slice() : cfg.units; }
 function diffLocked() { return !!NET.on; }
@@ -1645,7 +1645,7 @@ function userLabel() { return NET.on ? (cfg.cls && cfg.nick ? `${cfg.cls}반 ${c
 function renderUser() { ['userChip', 'userChip2'].forEach(id => { $(id).textContent = '👤 ' + userLabel(); }); }
 async function fetchTeach() {
   if (!NET.on || !cfg.cls) { TEACH.units = null; TEACH.diff = ''; return; }
-  try { const r = await fetch('api/settings', { cache: 'no-store' }); const j = await r.json(); const c = (j.classes || {})[cfg.cls] || {}; TEACH.units = Array.isArray(c.units) && c.units.length ? c.units : null; TEACH.diff = c.diff || ''; TEACH.mode = c.mode || 'solo'; } catch (e) {}
+  try { const r = await fetch('api/settings', { cache: 'no-store' }); const j = await r.json(); const c = (j.classes || {})[cfg.cls] || {}; TEACH.units = Array.isArray(c.units) && c.units.length ? c.units : null; TEACH.diff = c.diff || ''; TEACH.mode = c.mode || 'both'; } catch (e) {}
 }
 async function netCheck() {
   if (location.protocol === 'file:') { NET.on = false; } else {
@@ -1713,6 +1713,7 @@ async function pingPresence() {
   if (!NET.on || !cfg.cls) return;
   const st = !$('scrGame').hidden ? (S && S.duel ? 'duel' : 'play') : !$('scrLobby').hidden ? 'duel' : !$('scrPrep').hidden ? 'room' : '';
   if (!st) return;
+  if (st === 'room') { const was = TEACH.mode; await fetchTeach(); if (TEACH.mode !== was && !$('scrPrep').hidden) renderMode(); }
   try {
     const opt = cfg.nick ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cls: cfg.cls, nick: cfg.nick, st, pl: cfg.pilot }) } : {};
     const r = await fetch('api/presence?cls=' + cfg.cls, opt); const j = await r.json(); WHO = j.list || []; if (!$('scrPrep').hidden) renderWho();
@@ -1773,15 +1774,16 @@ $('bLaunch').onclick = async () => {
 };
 
 /* ---------- 1인 모드 / 1대1 대결 선택 (학생이 직접) ---------- */
-function wantDuel() { return cfg.pmode ? cfg.pmode === 'duel' : TEACH.mode === 'duel'; }
+function tMode() { return NET.on ? (TEACH.mode || 'both') : 'solo'; }
+function wantDuel() { const m = tMode(); return m === 'both' ? cfg.pmode === 'duel' : m === 'duel'; }
 function renderMode() {
   const duel = NET.on && wantDuel();
-  document.querySelectorAll('#modeRow button').forEach(b => { b.setAttribute('aria-pressed', String((b.dataset.m === 'duel') === duel)); if (b.dataset.m === 'duel') b.disabled = !NET.on; });
+  const m = tMode(); document.querySelectorAll('#modeRow button').forEach(b => { b.setAttribute('aria-pressed', String((b.dataset.m === 'duel') === duel)); b.disabled = m !== 'both' && b.dataset.m !== m; b.title = b.disabled ? '선생님이 ' + (m === 'duel' ? '1대1 대결' : '개인전') + '으로 정했어요' : ''; });
   $('bLaunch').innerHTML = duel ? '⚔ 대결 출격' : '✔ 선택 완료';
 }
 document.querySelectorAll('#modeRow button').forEach(b => b.onclick = () => { if (b.disabled) return; cfg.pmode = b.dataset.m; saveCfg(); sfx('ui_click', .5); renderMode(); renderPrep(); });
 function modeBtn() {
-  const ok = NET.on && cfg.cls && cfg.nick && S && !S.review; $('bMode').hidden = !ok; if (!ok) return;
+  const ok = NET.on && cfg.cls && cfg.nick && S && !S.review && tMode() === 'both'; $('bMode').hidden = !ok; if (!ok) return;
   const t = S.duel ? '🎯 1인 모드' : '⚔ 1대1 대결'; if ($('bMode').textContent !== t) $('bMode').textContent = t;
 }
 $('bMode').onclick = () => {

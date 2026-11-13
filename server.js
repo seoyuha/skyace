@@ -13,7 +13,7 @@ const CLASSES = ['8', '9', '10'];
 fs.mkdirSync(DATA_DIR, { recursive: true });
 let results = [];
 try { results = JSON.parse(fs.readFileSync(FILE, 'utf8')); if (!Array.isArray(results)) results = []; } catch (e) { results = []; }
-let settings = { classes: { 8: { units: [12], diff: 'normal' }, 9: { units: [12], diff: 'normal' }, 10: { units: [12], diff: 'normal' } } };
+let settings = { classes: { 8: { units: [12], diff: 'normal', mode: 'both' }, 9: { units: [12], diff: 'normal', mode: 'both' }, 10: { units: [12], diff: 'normal', mode: 'both' } } };
 try { const st = JSON.parse(fs.readFileSync(SFILE, 'utf8')); if (st && st.classes) settings = st; } catch (e) {}
 function saveSettings() { fs.writeFile(SFILE, JSON.stringify(settings), () => {}); }
 let halt = { paused: false, at: 0 };
@@ -91,7 +91,7 @@ const server = http.createServer(async (req, res) => {
         for (const c of CLASSES) {
           const v = (b.classes || {})[c] || {};
           const units = (Array.isArray(v.units) ? v.units : []).map(u => num(u, 1, 12)).filter((x, i, a) => a.indexOf(x) === i).sort((x, y) => x - y);
-          next[c] = { units: units.length ? units : [12], diff: ['easy', 'normal', 'hard'].includes(v.diff) ? v.diff : 'normal', mode: v.mode === 'duel' ? 'duel' : 'solo' };
+          next[c] = { units: units.length ? units : [12], diff: ['easy', 'normal', 'hard'].includes(v.diff) ? v.diff : 'normal', mode: ['solo', 'duel', 'both'].includes(v.mode) ? v.mode : 'both' };
         }
         settings = { classes: next, at: Date.now(), halt }; saveSettings(); return send(res, 200, { ok: true, classes: next });
       }
