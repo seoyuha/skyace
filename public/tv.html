@@ -72,6 +72,16 @@ body{font-family:var(--f-k);color:var(--ink);display:flex;align-items:center;jus
 .mt .gg{display:flex;gap:.4cqw}.mt .gg i{flex:1;height:.8cqw;border-radius:.4cqw;background:#061534;overflow:hidden;display:block}.mt .gg b{display:block;height:100%}
 .mt .st2{text-align:center;font-size:1cqw;color:#ffe68a}
 .stat{position:absolute;right:3%;top:2.2%;height:4.6%}
+/* 반 선택 · 접속 학생 */
+.selc{flex:1.6;gap:.5cqw;padding:0 .5cqw}
+.selc button{flex:1;height:78%;border:.2cqw solid #0a1a48;border-radius:999px;background:linear-gradient(#9fe6ff,#2a8cf5 55%,#1350c4);color:#fff;font:inherit;font-size:1.5cqw;text-shadow:0 .15cqw 0 #0a1a48;cursor:pointer;opacity:.6;white-space:nowrap}
+.selc button[aria-pressed="true"]{opacity:1;background:linear-gradient(#fff7b0,#ffd43a 55%,#f0a20a);color:#3a1a00;text-shadow:none;box-shadow:0 0 1cqw #ffd43a}
+#whoBody{position:absolute;inset:2.4cqw .6cqw .6cqw;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:4.2cqw;gap:.6cqw;overflow:hidden;align-content:start}
+.wc{display:flex;align-items:center;gap:.5cqw;padding:0 .7cqw;background:#0b2a5ccc;border:.18cqw solid #3e8ad6;border-radius:.9cqw;font-size:1.5cqw;white-space:nowrap;overflow:hidden;animation:in .4s ease-out}
+.wc i{flex:0 0 auto;width:1cqw;height:1cqw;border-radius:50%;background:#8fb3d3}
+.wc.play i{background:#3fd94a;box-shadow:0 0 .6cqw #3fd94a}.wc.duel i{background:#ff5c8a;box-shadow:0 0 .6cqw #ff5c8a}.wc.room i{background:#ffd43a}
+.wc span{overflow:hidden;text-overflow:ellipsis}.wc small{margin-left:auto;font-size:1.05cqw;color:var(--ink2)}
+.whoLg{position:absolute;right:1.2cqw;top:.5cqw;font-size:1.1cqw;color:var(--ink2);display:flex;gap:1cqw}.whoLg b{font-weight:400}
 /* 정지 */
 .halt{position:absolute;inset:0;background:#020818cc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1cqw;z-index:9}
 .halt img{width:36cqw}
@@ -88,9 +98,10 @@ body{font-family:var(--f-k);color:var(--ink);display:flex;align-items:center;jus
     <div class="chip">👥 참여 학생 <b id="cPpl">0</b>명</div>
     <div class="chip">✈ 오늘 출격 <b id="cRun">0</b>번</div>
     <div class="chip">🎯 평균 정답률 <b id="cAcc">0%</b></div>
+    <div class="chip selc" id="selc"><button type="button" data-c="all" aria-pressed="true">전체</button><button type="button" data-c="8" aria-pressed="false">8반</button><button type="button" data-c="9" aria-pressed="false">9반</button><button type="button" data-c="10" aria-pressed="false">10반</button></div>
     <div class="chip" id="cState"><img id="stImg" src="img/v6_e_play.webp" alt="게임 중"></div>
   </div>
-  <div class="pnl" id="vsP"><div class="ttl">반 대항전 · 평균 정답률</div><div id="vsBody"></div></div>
+  <div class="pnl" id="vsP"><div class="ttl" id="vsTtl">반 대항전 · 평균 정답률</div><div id="vsBody"></div><div id="whoBody" hidden></div><div class="whoLg" id="whoLg" hidden><b>🟡 대기실</b><b>🟢 게임 중</b><b>🔴 1대1 대결</b></div></div>
   <div class="pnl" id="rkP"><div class="ttl">🏆 랭킹</div>
     <div class="tabs"><button type="button" data-v="all" aria-pressed="true"><img src="img/v6_b_rankall.webp" alt="전체 랭킹"></button><button type="button" data-v="cls" aria-pressed="false"><img src="img/v6_b_rankcls.webp" alt="반 랭킹"></button></div>
     <div class="rkSub" id="rkSub"></div><div id="rkRows"></div>
@@ -105,7 +116,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 let token = '';
 try { token = decodeURIComponent(location.hash.slice(1)) || sessionStorage.getItem('skyTeacher') || ''; if (token) sessionStorage.setItem('skyTeacher', token); history.replaceState(null, '', location.pathname); } catch (e) {}
-let all = [], view = 'all', clsIdx = 0, autoT = 0, DU = { matches: [] };
+let all = [], view = 'all', clsIdx = 0, autoT = 0, DU = { matches: [] }, sel = 'all', WHO = [], whoReq = 0;
 const CLS = ['8', '9', '10'];
 const todayStart = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); };
 async function load() {
@@ -120,21 +131,26 @@ async function load() {
 }
 function ago(t) { const s = Math.round((Date.now() - t) / 1000); return s < 60 ? '방금 전' : s < 3600 ? Math.floor(s / 60) + '분 전' : Math.floor(s / 3600) + '시간 전'; }
 function render() {
-  const today = all.filter(r => r.at >= todayStart()), base = today.length ? today : all;
+  const mine = sel === 'all' ? all : all.filter(r => r.cls === sel);
+  const today = mine.filter(r => r.at >= todayStart()), base = today.length ? today : mine;
   const q = base.reduce((a, r) => a + r.total, 0), c = base.reduce((a, r) => a + r.correct, 0);
   $('cPpl').textContent = new Set(base.map(r => r.cls + '-' + r.nick)).size; $('cRun').textContent = base.length; $('cAcc').textContent = (q ? Math.round(c / q * 100) : 0) + '%';
   // 반 대항전
   const cs = CLS.map(k => { const rs = base.filter(r => r.cls === k), qq = rs.reduce((a, r) => a + r.total, 0), cc = rs.reduce((a, r) => a + r.correct, 0); return { k, n: rs.length, ppl: new Set(rs.map(r => r.nick)).size, acc: qq ? Math.round(cc / qq * 100) : 0 }; });
   const lead = cs.slice().sort((a, b) => b.acc - a.acc || b.n - a.n)[0];
+  const one = sel !== 'all'; $('vsBody').hidden = one; $('whoBody').hidden = !one; $('whoLg').hidden = !one;
+  if (one) { $('vsTtl').textContent = sel + '반 접속 학생 ' + WHO.length + '명'; const ST = { room: '대기실', play: '게임 중', duel: '1대1 대결' };
+    $('whoBody').innerHTML = WHO.length ? WHO.map(w => `<div class="wc ${esc(w.st)}"><i></i><span>${esc(w.nick)}</span><small>${ST[w.st] || ''}</small></div>`).join('') : '<div class="empty" style="grid-column:1/-1">아직 접속한 학생이 없어요</div>'; }
+  else $('vsTtl').textContent = '반 대항전 · 평균 정답률';
   $('vsBody').innerHTML = cs.map((x, i) => `<div class="cls c${i + 1}" style="left:${3 + i * 34}%">${x === lead && x.n ? '<img class="crown" src="img/v6_crown.webp" alt="1등">' : ''}<div class="tube"><i style="height:${x.acc}%"></i></div><div class="acc">${x.acc}%</div><div class="nm">${x.k}반</div><div class="sub">출격 ${x.n}번 · ${x.ppl}명</div></div>`).join('') + '<img class="vsI" src="img/v6_vs.webp" alt="" style="left:28%"><img class="vsI" src="img/v6_vs.webp" alt="" style="left:62%">';
   // 랭킹
-  const pool = base.filter(r => !r.review && !r.duel && (view === 'all' || r.cls === CLS[clsIdx]));
+  const pool = base.filter(r => !r.review && !r.duel && (sel !== 'all' ? r.cls === sel : (view === 'all' || r.cls === CLS[clsIdx])));
   const best = new Map(); pool.forEach(r => { const k = r.cls + '-' + r.nick, b = best.get(k); if (!b || r.score > b.score) best.set(k, r); });
   const rk = [...best.values()].sort((a, b) => b.score - a.score).slice(0, 8);
-  $('rkSub').textContent = (view === 'all' ? '전체 반' : CLS[clsIdx] + '반') + (today.length ? ' · 오늘' : ' · 전체 기간');
+  $('rkSub').textContent = (sel !== 'all' ? sel + '반' : view === 'all' ? '전체 반' : CLS[clsIdx] + '반') + (today.length ? ' · 오늘' : ' · 전체 기간');
   $('rkRows').innerHTML = rk.length ? rk.map((r, i) => `<div class="row${i < 3 ? ' top' : ''}"><span class="r">${i < 3 ? `<img src="img/v6_m${i + 1}.webp" alt="${i + 1}위">` : i + 1}</span><span class="n">${esc(r.nick)}<small>${r.cls}반</small></span><span class="s">${r.score.toLocaleString()}</span></div>`).join('') : '<div class="empty">아직 기록이 없어요</div>';
   // 실시간 1대1 대결
-  const live = (DU.matches || []).filter(m => m.state === 'play' || m.sec < 600 && m.state === 'end').slice(0, 5);
+  const live = (DU.matches || []).filter(m => (sel === 'all' || m.cls === sel) && m.state === 'play' || m.sec < 600 && m.state === 'end').slice(0, 5);
   if (live.some(m => m.state === 'play')) {
     $('rcTtl').textContent = '⚔ 실시간 1대1 대결';
     $('rcCards').innerHTML = live.map(m => { const sc = (m.sum && m.sum.sc) || [0, 0], g = (m.sum && m.sum.g) || [100, 100];
@@ -143,13 +159,26 @@ function render() {
   }
   $('rcTtl').textContent = '방금 들어온 기록';
   // 최근
-  const rc = all.slice().sort((a, b) => b.at - a.at).slice(0, 5);
+  const rc = mine.slice().sort((a, b) => b.at - a.at).slice(0, 5);
   $('rcCards').innerHTML = rc.length ? rc.map(r => `<div class="card${r.win ? '' : ' lose'}">${r.win ? '<img class="w" src="img/v6_win_small.webp" alt="WIN">' : ''}<div class="who">${r.cls}반 ${esc(r.nick)}${r.duel ? ' ⚔' : ''}</div><div class="sc">${r.score.toLocaleString()}</div><div class="st">${r.win ? '★'.repeat(r.stars) + '☆'.repeat(3 - r.stars) : '다시 도전!'}</div><div class="ago">${ago(r.at)} · 정답률 ${r.acc}%</div></div>`).join('') : '<div class="empty" style="width:100%;margin-top:2cqw">학생들이 출격하면 여기에 바로 나와요</div>';
 }
 function setView(v) { view = v; document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v))); render(); }
-document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { clearInterval(autoT); setView(b.dataset.v); if (b.dataset.v === 'cls') clsIdx = (clsIdx + 1) % 3, render(); });
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { if (b.dataset.v === 'all') pickCls('all'); else pickCls(CLS[sel === 'all' ? clsIdx : (CLS.indexOf(sel) + 1) % 3]); });
 // 자동으로 전체 → 8반 → 9반 → 10반 순서로 돌아가며 보여 줘요
-let step = 0; autoT = setInterval(() => { step = (step + 1) % 4; if (step === 0) setView('all'); else { clsIdx = step - 1; setView('cls'); } }, 10000);
+let step = 0; autoT = setInterval(() => { if (sel !== 'all') return; step = (step + 1) % 4; if (step === 0) setView('all'); else { clsIdx = step - 1; setView('cls'); } }, 10000);
+async function loadWho() {
+  if (sel === 'all') { WHO = []; return; }
+  const my = ++whoReq, c = sel;
+  try { const r = await fetch('api/presence?cls=' + encodeURIComponent(c), { cache: 'no-store' }); const j = await r.json(); if (my === whoReq && c === sel) { WHO = j.list || []; render(); } } catch (e) {}
+}
+function pickCls(c) {
+  sel = c; clearInterval(autoT); autoT = 0; WHO = [];
+  document.querySelectorAll('#selc button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === c)));
+  if (c === 'all') setView('all'); else { clsIdx = CLS.indexOf(c); setView('cls'); }
+  loadWho(); load();
+}
+document.querySelectorAll('#selc button').forEach(b => b.onclick = () => pickCls(b.dataset.c));
+setInterval(loadWho, 3000);
 $('fs').onclick = () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); else document.exitFullscreen(); };
 load(); setInterval(load, 5000);
 </script>
